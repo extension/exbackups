@@ -1,0 +1,8 @@
+logsdir = "/var/log/exbackups"
+
+[backups]
+program           = '/usr/bin/rdiff-backup'
+options           = '--print-statistics'
+parentdestination = '/services/remotebackups/hosts'
+configdir         = '/services/remotebackups'
+remotedir         = '/'
