@@ -6,25 +6,39 @@ require 'open3'
 
 module Exbackups
 
-  class ExbackupsError < StandardError; end
-
-
   class Backup
 
     attr_accessor :results, :host, :fqdn, :backup_command, :local_backup_directory
 
     def self.host_list
-      Exbackups.settings.backuphosts.to_hash.keys.map{|hostname| hostname.to_s}
+      if(Exbackups.settings.backuphosts)
+        Exbackups.settings.backuphosts.to_hash.keys.map{|hostname| hostname.to_s}
+      else
+        []
+      end
     end
 
     def initialize(host)
       if(self.class.host_list.include?(host))
+        @testmode = false
         @host = host
+      elsif(host == 'testhost')
+        @testmode = true
+        @host = host
+        @errortest = false
+      elsif(host == 'testerrorhost')
+        @testmode = true
+        @host = host
+        @errortest = true
       else
-        raise ExbackupsError, "invalid host specified: #{host}"
+        raise Exbackups::ConfigurationError, "invalid host specified: #{host}"
       end
 
-      @fqdn = Exbackups.settings.backuphosts.to_hash[@host]
+      if(!@testmode)
+        @fqdn = Exbackups.settings.backuphosts.to_hash[@host]
+      else
+        @fqdn = "#{@host}.test.extension.org"
+      end
 
 
       # build the command
@@ -45,32 +59,47 @@ module Exbackups
       build_backup << @local_backup_directory
 
       @backup_command = build_backup.join(' ')
+      @results = {}
 
     end
 
 
     def go_forth_and_backup
 
-      if not File.exists?(@local_backup_directory) then
-        Dir.mkdir(@local_backup_directory)
+      if(!@testmode)
+        if not File.exists?(@local_backup_directory) then
+          Dir.mkdir(@local_backup_directory)
+        end
+
+        @results['server_name'] = @host
+        @results['server_fqdn'] = @fqdn
+        @results['backupcommand'] = @backup_command
+        @results['start'] = Time.now.utc
+        stdin, stdout, stderr = Open3.popen3(@backup_command)
+        stdin.close
+        @results['stdout'] = stdout.readlines
+        @results['stderr'] = stderr.readlines
+        @results['finish'] = Time.now.utc
+        @results['runtime'] = (@results['finish'] - @results['start'])
+        @results['success'] = @results['stderr'].empty?
+      else
+        @results['server_name'] = @host
+        @results['server_fqdn'] = @fqdn
+        @results['backupcommand'] = @backup_command
+        @results['start'] = Time.now.utc
+        @results['finish'] = @results['start'] + 42
+        @results['runtime'] = (@results['finish'] - @results['start'])
+        @results['stdout'] = 'Simulating a backup log and post'
+        if(@errortest)
+          @results['stderr'] = 'Simulating a backup error'
+        else
+          @results['stderr'] = ''
+        end
+        @results['success'] = @results['stderr'].empty?
       end
 
-      @results['host'] = @host
-      @results['fqdn'] = @fqdn
-      @results['backupcommand'] = @backup_command
-      @results['start'] = Time.now.utc
-      stdin, stdout, stderr = Open3.popen3(@backup_command)
-      stdin.close
-      @results['stdout'] = stdout.readlines
-      @results['stderr'] = stderr.readlines
-      @results['finish'] = Time.now.utc
-      @results['runtime'] = (@results['finish'] - @results['start'])
-      @results['success'] = @results['stderr'].empty?
-
-      # TODO log to albatross?
-      # mythical boilerplate for now
-      # backuplog = Exbackups::BackupLog.new(@results)
-      # backuplog.post
+      backuplog = Exbackups::BackupLog.new("#{@host}-backup",@results)
+      backuplog.post
 
       @results['success']
     end

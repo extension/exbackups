@@ -4,13 +4,19 @@
 # see LICENSE file
 
 require 'logger'
+require 'rest-client'
+
 require "exbackups/version"
 require 'exbackups/deep_merge' unless defined?(DeepMerge)
 require "exbackups/options"
+require "exbackups/errors"
+require "exbackups/backup"
+require "exbackups/backup_log"
+require "exbackups/ping"
 
 module Exbackups
 
-  SETTINGS_CONFIG_FILE = '/etc/exbackups/settings.yml'
+  SETTINGS_CONFIG_FILE = '/etc/exbackups/settings.toml'
 
   def self.settings
     if(@settings.nil?)
