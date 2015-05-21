@@ -8,7 +8,7 @@ module Exbackups
 
   class Backup
 
-    attr_accessor :results, :host, :fqdn, :backup_command, :local_backup_directory
+    attr_accessor :results, :host, :fqdn, :backupcommand, :local_backup_directory
 
     def self.host_list
       if(Exbackups.settings.backuphosts)
@@ -22,11 +22,11 @@ module Exbackups
       if(self.class.host_list.include?(host))
         @testmode = false
         @host = host
-      elsif(host == 'testhost')
+      elsif(host == Exbackups::TEST_HOST)
         @testmode = true
         @host = host
         @errortest = false
-      elsif(host == 'testerrorhost')
+      elsif(host == Exbackups::TEST_ERROR_HOST)
         @testmode = true
         @host = host
         @errortest = true
@@ -35,7 +35,7 @@ module Exbackups
       end
 
       if(!@testmode)
-        @fqdn = Exbackups.settings.backuphosts.to_hash[@host]
+        @fqdn = Exbackups.settings.backuphosts.to_hash[@host.to_sym]
       else
         @fqdn = "#{@host}.test.extension.org"
       end
@@ -58,7 +58,7 @@ module Exbackups
       @local_backup_directory =  "#{Exbackups.settings.backups.parentdestination}/#{@host}"
       build_backup << @local_backup_directory
 
-      @backup_command = build_backup.join(' ')
+      @backupcommand = build_backup.join(' ')
       @results = {}
 
     end
@@ -73,9 +73,9 @@ module Exbackups
 
         @results['server_name'] = @host
         @results['server_fqdn'] = @fqdn
-        @results['backupcommand'] = @backup_command
+        @results['backupcommand'] = @backupcommand
         @results['start'] = Time.now.utc
-        stdin, stdout, stderr = Open3.popen3(@backup_command)
+        stdin, stdout, stderr = Open3.popen3(@backupcommand)
         stdin.close
         @results['stdout'] = stdout.readlines
         @results['stderr'] = stderr.readlines

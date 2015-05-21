@@ -41,12 +41,12 @@ module Exbackups
     def post_success
       @posted = true
       Exbackups.logger.info("LOGGING: Posted ping to #{Exbackups.settings.albatross_uri}")
-      return true
+      OpenStruct.new(success: true, message: "Posted ping to #{Exbackups.settings.albatross_uri}")
     end
 
     def post_failed(message)
       Exbackups.logger.error("LOGGING: #{message}")
-      return false
+      OpenStruct.new(success: false, message: message)
     end
 
   end

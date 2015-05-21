@@ -85,7 +85,7 @@ module Exbackups
       end
       @posted = true
       Exbackups.logger.info("LOGGING: Posted #{@label} output to #{@options.albatross_uri}")
-      return true
+      OpenStruct.new(success: true, message: "Posted #{@label} output to #{@options.albatross_uri}")
     end
 
     def post_failed(message)
@@ -94,7 +94,7 @@ module Exbackups
       @metadata['failcount'] += 1
       self.dump
       Exbackups.logger.error("LOGGING: #{message}")
-      return false
+      OpenStruct.new(success: false, message: message)
     end
 
     def error

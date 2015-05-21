@@ -95,7 +95,7 @@ module Exbackups
     def to_hash
       result = {}
       marshal_dump.each do |k, v|
-        result[k] = v.instance_of?(GetData::Options) ? v.to_hash : v
+        result[k] = v.instance_of?(Exbackups::Options) ? v.to_hash : v
       end
       result
     end
