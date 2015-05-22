@@ -51,6 +51,8 @@ module Exbackups
       build_backup <<  "--include-globbing-filelist #{Exbackups.settings.backups.configdir}/backup-includelist-default}"
       # exclude files
       build_backup << "--exclude '**'"
+      # run rdiff-backup remotely with sudo
+      build_backup << "--remote-schema 'ssh -C %s \"sudo /usr/bin/rdiff-backup --server\"'"
       # host::remotedir
       build_backup << "#{@fqdn}::#{Exbackups.settings.backups.remotedir}"
       # localdir
