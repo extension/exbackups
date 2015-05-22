@@ -101,9 +101,8 @@ module Exbackups
       end
 
       backuplog = Exbackups::BackupLog.new("#{@host}-backup",@results)
-      backuplog.post
-
-      @results['success']
+      postresults = backuplog.post
+      postresults
     end
 
   end # class
