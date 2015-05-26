@@ -48,7 +48,7 @@ module Exbackups
       # options
       build_backup << Exbackups.settings.backups.options
       # include files
-      build_backup <<  "--include-globbing-filelist #{Exbackups.settings.backups.configdir}/backup-includelist-default}"
+      build_backup <<  "--include-globbing-filelist #{Exbackups.settings.backups.configdir}/backup-includelist-default"
       # exclude files
       build_backup << "--exclude '**'"
       # run rdiff-backup remotely with sudo
