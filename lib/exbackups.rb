@@ -6,6 +6,7 @@
 require 'logger'
 require 'rest-client'
 require 'ostruct'
+require 'pathname'
 
 require "exbackups/version"
 require 'exbackups/deep_merge' unless defined?(DeepMerge)
