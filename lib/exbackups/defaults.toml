@@ -1,10 +1,10 @@
-logsdir = "/var/log/exbackups"
+logsdir = "/services/backups/logs"
 backup_key = "supercalifragilisticexpialidocious"
 albatross_uri = "https://engineering.extension.org"
 
 [backups]
 program           = "/usr/bin/rdiff-backup"
 options           = "--print-statistics"
-parentdestination = "/services/remotebackups/hosts"
-configdir         = "/services/remotebackups"
+parentdestination = "/services/backups/hosts"
+configdir         = "/services/backups"
 remotedir         = "/"
