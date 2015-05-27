@@ -79,8 +79,8 @@ module Exbackups
         @results['start'] = Time.now.utc
         stdin, stdout, stderr = Open3.popen3(@backupcommand)
         stdin.close
-        @results['stdout'] = stdout.readlines
-        @results['stderr'] = stderr.readlines
+        @results['stdout'] = stdout.read
+        @results['stderr'] = stderr.read
         @results['finish'] = Time.now.utc
         @results['runtime'] = (@results['finish'] - @results['start'])
         @results['success'] = @results['stderr'].empty?
