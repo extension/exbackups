@@ -91,11 +91,13 @@ module Exbackups
           backup = Exbackups::Backup.new(hostname)
           say "Command for host: #{hostname}"
           say "  #{backup.backupcommand}"
+          say "  #{backup.cleanupcommand}"
         end
       elsif(known_hosts.include?(host))
         backup = Exbackups::Backup.new(host)
         say "Command for host: #{host}"
         say "  #{backup.backupcommand}"
+        say "  #{backup.cleanupcommand}"
       else
         say("#{host} is not a configured backup host. Configured backup hosts are: #{known_hosts.join(', ')}")
         exit(1)

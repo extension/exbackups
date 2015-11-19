@@ -8,7 +8,7 @@ module Exbackups
 
   class Backup
 
-    attr_accessor :results, :host, :fqdn, :backupcommand, :local_backup_directory
+    attr_accessor :results, :host, :fqdn, :backupcommand, :local_backup_directory, :cleanupcommand
 
     def self.host_list
       if(Exbackups.settings.backuphosts)
@@ -41,7 +41,7 @@ module Exbackups
       end
 
 
-      # build the command
+      # build the backup command
       build_backup = []
       # program
       build_backup << Exbackups.settings.backups.program
@@ -59,8 +59,21 @@ module Exbackups
 
       @local_backup_directory =  "#{Exbackups.settings.backups.parentdestination}/#{@host}"
       build_backup << @local_backup_directory
-
       @backupcommand = build_backup.join(' ')
+
+
+      # build the cleanup command
+      build_cleanup = []
+      # program
+      build_cleanup << Exbackups.settings.backups.program
+      # options
+      build_cleanup << Exbackups.settings.backups.options
+      # remove older than 1 month
+      build_cleanup <<  "--force --remove-older-than 1M"
+      # localdir
+      build_cleanup << @local_backup_directory
+      @cleanupcommand = build_cleanup.join(' ')
+
       @results = {}
 
     end
@@ -76,11 +89,19 @@ module Exbackups
         @results['server_name'] = @host
         @results['server_fqdn'] = @fqdn
         @results['backupcommand'] = @backupcommand
+        @results['cleanupcommand'] = @cleanupcommand
         @results['start'] = Time.now.utc
+
         stdin, stdout, stderr = Open3.popen3(@backupcommand)
         stdin.close
         @results['stdout'] = stdout.read
         @results['stderr'] = stderr.read
+
+        stdin, stdout, stderr = Open3.popen3(@cleanupcommand)
+        stdin.close
+        @results['stdout'] += stdout.read
+        @results['stderr'] += stderr.read
+
         @results['finish'] = Time.now.utc
         @results['runtime'] = (@results['finish'] - @results['start'])
         @results['success'] = @results['stderr'].empty?
@@ -88,6 +109,7 @@ module Exbackups
         @results['server_name'] = @host
         @results['server_fqdn'] = @fqdn
         @results['backupcommand'] = @backup_command
+        @results['cleanupcommand'] = @cleanupcommand
         @results['start'] = Time.now.utc
         @results['finish'] = @results['start'] + 42
         @results['runtime'] = (@results['finish'] - @results['start'])
