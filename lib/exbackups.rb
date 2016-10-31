@@ -7,6 +7,7 @@ require 'logger'
 require 'rest-client'
 require 'ostruct'
 require 'pathname'
+require 'json'
 
 require "exbackups/version"
 require 'exbackups/deep_merge' unless defined?(DeepMerge)
@@ -21,6 +22,7 @@ module Exbackups
   SETTINGS_CONFIG_FILE = '/etc/exbackups/settings.toml'
   TEST_HOST = 'testhost'
   TEST_ERROR_HOST = 'testerrorhost'
+  LOCALHOST = 'localhost'
 
   def self.settings
     if(@settings.nil?)
