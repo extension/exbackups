@@ -51,7 +51,7 @@ module Exbackups
       build_syncto << Exbackups.settings.syncto.localdir
       # remote syncto and dir
       build_syncto << "#{@fqdn}:#{Exbackups.settings.syncto.remotedir}"
-      @backupcommand = build_backup.join(' ')
+      @backupcommand = build_syncto.join(' ')
       @results = {}
 
     end

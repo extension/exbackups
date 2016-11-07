@@ -16,6 +16,7 @@ require "exbackups/errors"
 require "exbackups/backup"
 require "exbackups/backup_log"
 require "exbackups/ping"
+require "exbackups/syncto"
 
 module Exbackups
 
