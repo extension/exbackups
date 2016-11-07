@@ -104,6 +104,35 @@ module Exbackups
       end
     end
 
+    desc "syncto", "Run a syncto for all hosts or a specific host"
+    method_option :host, :default => 'all', :aliases => ["-h","--host"], :desc => "Host to backup (or 'all')"
+    def syncto
+      host = options[:host]
+      known_hosts = Exbackups::Syncto.host_list
+      if(host == 'all')
+        known_hosts.each do |hostname|
+          backup = Exbackups::Syncto.new(hostname)
+          result = backup.go_forth_and_syncto
+          if(result.success)
+            say "#{hostname} syncto success: #{result.message}"
+          else
+            say "#{hostname} syncto error: #{result.message}"
+          end
+        end
+      elsif(known_hosts.include?(host))
+        backup = Exbackups::Syncto.new(host)
+        result = backup.go_forth_and_syncto
+        if(result.success)
+          say "#{host} syncto success: #{result.message}"
+        else
+          say "#{host} syncto error: #{result.message}"
+        end
+      else
+        say("#{host} is not a configured syncto host. Configured syncto hosts are: #{known_hosts.join(', ')}")
+        exit(1)
+      end
+    end
+
   end
 
 end

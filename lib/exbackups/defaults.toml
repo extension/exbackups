@@ -1,4 +1,4 @@
-logsdir = "/services/backups/logs"
+logsdir = "/services/exbackups/logs"
 backup_key = "supercalifragilisticexpialidocious"
 albatross_uri = "https://engineering.extension.org"
 
@@ -9,3 +9,9 @@ parentdestination = "/services/exbackups/hosts"
 configdir         = "/services/exbackups"
 remotedir         = "/"
 retention         = "3M"
+
+[syncto]
+program           = "/usr/bin/rsync"
+options           = "--archive --compress --rsh='ssh'"
+remotedir         = "/services/exbackups/"
+localdir          = "/services/exbackups/"
