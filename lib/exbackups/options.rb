@@ -43,7 +43,7 @@ module Exbackups
 
     def files
       if(@files.nil? or @files.empty?)
-        @files = ["#{File.join(File.dirname(__FILE__), "defaults.toml").to_s}",Exbackups::SETTINGS_CONFIG_FILE]
+        @files = ["#{File.join(File.dirname(__FILE__), "defaults.toml").to_s}",Exbackups::SETTINGS_CONFIG_FILE,File.expand_path("./settings.local.toml")]
       end
       @files
     end
