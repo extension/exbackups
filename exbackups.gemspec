@@ -14,8 +14,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
   spec.add_dependency('thor', '>= 0.16.0')
-  spec.add_dependency('parslet', '= 1.6.2')
-  spec.add_dependency('toml', '~> 0.0.3')
+  spec.add_dependency('toml', '~> 0.2.0')
   spec.add_dependency('rest-client', '~> 1.8.0')
 
   spec.add_development_dependency "bundler", "~> 1.7"
